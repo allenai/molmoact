@@ -4,14 +4,14 @@ import numpy as np
 import cv2
 from PIL import Image
 import torch
-from experiments.libero_utils import (
+from experiments.libero.libero_utils import (
     get_libero_dummy_action,
     get_libero_env,
     get_libero_image,
     get_libero_wrist_image,
     save_rollout_video,
 )
-from experiments.robot_utils import (
+from experiments.libero.robot_utils import (
     DATE_TIME,
     get_image_resize_size,
     set_seed_everywhere,
