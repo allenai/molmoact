@@ -537,10 +537,10 @@ def main():
     parser = argparse.ArgumentParser(
         description="Convert Molmo checkpoint to HuggingFace format."
     )
-    parser.add_argument("checkpoint_dir", help="Location of Molmo checkpoint.")
-    parser.add_argument("output_dir", help="Location to save the converted checkpoint.")
+    parser.add_argument("--checkpoint_dir", help="Location of Molmo checkpoint.")
+    parser.add_argument("--output_dir", help="Location to save the converted checkpoint.")
     parser.add_argument(
-        "style",
+        "--style",
         type=str,
         help="task style to use for the model",
     )
