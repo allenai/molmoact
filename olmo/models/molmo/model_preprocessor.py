@@ -456,21 +456,23 @@ class Preprocessor:
         if "image" in example:
             
             
-            line_mod = example.get("line_mod", None)
-            left_line_mod = example.get("left_line_mod", None)
-            right_line_mod = example.get("right_line_mod", None)
+            annotation = example.get("annotation", None)
 
-            line_mod_list = [line_mod, left_line_mod, right_line_mod]
+            # these two are for bimanual, by default they are none and skipped
+            left_annotation = example.get("left_annotation", None)
+            right_annotation = example.get("right_annotation", None)
+
+            annotation_list = [annotation, left_annotation, right_annotation]
             
             
             try:
                 if isinstance(example["image"], (list, tuple)):
                     image = [
-                        load_image(x, line_mod_list=line_mod_list if i == 0 else [])
+                        load_image(x, annotation_list=annotation_list if i == 0 else [])
                         for i, x in enumerate(example["image"])
                     ]
                 else:
-                    image = load_image(example["image"], line_mod_list=line_mod_list)
+                    image = load_image(example["image"], annotation_list=annotation_list)
                     
                     
             except Exception as e:
