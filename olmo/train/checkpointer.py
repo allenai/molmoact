@@ -144,7 +144,7 @@ def is_unsharded_checkpoint(dir: PathOrStr) -> bool:
     return file_exists(join(dir, MODEL_FILENAME))
 
 
-def is_hf_checkoint(dir: PathOrStr) -> bool:
+def is_hf_checkpoint(dir: PathOrStr) -> bool:
     p = Path(dir)
     
     # if stored remotely
@@ -180,6 +180,9 @@ def load_model_state(dir: PathOrStr, model: nn.Module, cfg: CheckpointerConfig =
     if is_unsharded_checkpoint(dir):
         log.info(f"Loading model state from unsharded checkpoint {dir}...")
         load_model_state_unsharded(dir, model)
+    elif is_hf_checkpoint(dir):
+        log.info(f"Loading model state from unsharded checkpoint {dir}...")
+        load_model_state_hf(dir, model)
     else:
         log.info(f"Loading model state from sharded checkpoint {dir}...")
         Checkpointer(cfg or CheckpointerConfig()).load(

@@ -14,12 +14,12 @@ import json
 import torch
 import wandb
 from beaker import Beaker
-from omegaconf import OmegaConf
+from omegaconf import OmegaConf, open_dict
 from torch.distributed.fsdp import FullyShardedDataParallel as FSDP
 
 from olmo.exceptions import OLMoCliError, OLMoConfigurationError
 from olmo.io import file_exists, write_file
-from olmo.train.checkpointer import Checkpointer, load_model_state_unsharded, load_model_state_hf, is_unsharded_checkpoint, is_hf_checkoint
+from olmo.train.checkpointer import Checkpointer, load_model_state_unsharded, load_model_state_hf, is_unsharded_checkpoint, is_hf_checkpoint
 from olmo.torch_util import (
     barrier,
     get_global_rank,
@@ -119,7 +119,7 @@ def run_trainer(cfg: TrainConfig) -> None:
     if start_from_unsharded:
         assert reset_opt and reset_train, "Unshared checkpoints do not support optim/train state loading"
     
-    start_from_hf = start_from and is_hf_checkoint(start_from)
+    start_from_hf = start_from and is_hf_checkpoint(start_from)
     if start_from_hf:
         assert reset_opt and reset_train, "Huggingface checkpoints do not support optim/train state loading"
 
