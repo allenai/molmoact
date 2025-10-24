@@ -53,8 +53,8 @@
   4.2.3 [Post-training (LIBERO)](#423-post-training-libero)  
 5. [Evaluation](#5-evaluation-wip)  
  5.1 [SimplerEnv](#51-simpler-env)  
- 5.2 [LIBERO Evaluation](#52-libero-evaluation)  
- 5.3 [Real-world Evaluation](#53-real-world-evaluation)  
+ 5.2 [LIBERO](#52-libero)  
+ 5.3 [Real-world](#53-real-world)  
 6. [License and Use](#6-license-and-use)  
 7. [Model and Hardware Safety](#7-model-and-hardware-safety)  
 8. [Citation](#8-citation)  
@@ -458,10 +458,33 @@ bash scripts/molmoact_drawer_variant_agg.sh
 
 
 
-### 5.2 LIBERO Evaluation
-_Content coming soon._
+### 5.2 LIBERO
 
-### 5.3 Real-world Evaluation
+```bash
+# under the project dir of molmoact/
+cd experiments/LIBERO
+pip install -e .
+pip install einops torchvision accelerate
+pip install transformers==4.52.1
+pip install vllm==0.8.5
+export VLLM_WORKER_MULTIPROC_METHOD=spawn
+cd ../libero
+
+# to replicate molmoact results with vllm
+python run_libero_eval_vllm.py --task spatial --checkpoint allenai/MolmoAct-7B-D-LIBERO-Spatial-0812
+python run_libero_eval_vllm.py --task object --checkpoint allenai/MolmoAct-7B-D-LIBERO-Object-0812
+python run_libero_eval_vllm.py --task goal --checkpoint allenai/MolmoAct-7B-D-LIBERO-Goal-0812
+python run_libero_eval_vllm.py --task 10 --checkpoint allenai/MolmoAct-7B-D-LIBERO-Long-0812
+
+# we also provide the code to run libero with only huggingface
+python run_libero_eval.py --task spatial --checkpoint allenai/MolmoAct-7B-D-LIBERO-Spatial-0812
+python run_libero_eval.py --task object --checkpoint allenai/MolmoAct-7B-D-LIBERO-Object-0812
+python run_libero_eval.py --task goal --checkpoint allenai/MolmoAct-7B-D-LIBERO-Goal-0812
+python run_libero_eval.py --task 10 --checkpoint allenai/MolmoAct-7B-D-LIBERO-Long-0812
+```
+
+
+### 5.3 Real-world
 _Content coming soon._
 
 ---
