@@ -41,7 +41,7 @@
  2.2 [Models](#22-models)  
 3. [Installation](#3-training-wip)  
 4. [Training (WIP)](#4-training-wip)  
- 4.1 [Data Processing & Fine-tuning (WIP)](#41-data-processing--fine-tuning-post-training-wip)  
+ 4.1 [Data Processing & Fine-tuning](#41-data-processing--fine-tuning-post-training)  
  4.2 [Training Replication](#42-training-replication)  
   4.2.1 [Pre-training](#421-pre-training)  
   4.2.2 [Mid-training](#422-mid-training)  
@@ -102,7 +102,7 @@ pip install -e .[all]
 ```
 ---
 
-## 4. Training (WIP)
+## 4. Training
 
 We provide instructions on both how to train your own datasets on MolmoAct and how to replicate all of our training stages:
 
