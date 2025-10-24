@@ -329,16 +329,21 @@ class ActionProcessor:
         # Statistics will be computed from dataset
         self.stats = None
     
-    def compute_dataset_statistics(self, dataset) -> Dict:
+    def compute_dataset_statistics(self, dataset, normalize_dims: int = 6) -> Dict:
         """Compute action statistics from dataset.
         
         Args:
             dataset: HuggingFace dataset with 'action' field
+            normalize_dims: Number of dimensions to normalize (rest get mask=False)
             
         Returns:
             Dictionary with statistics
         """
         all_actions = []
+        all_proprios = []
+        
+        # Count unique trajectories/episodes
+        episode_ids = set()
         
         for sample in dataset:
             # Handle different action field formats
@@ -358,11 +363,28 @@ class ActionProcessor:
             # Convert to numpy array
             action_vec = np.array(action, dtype=np.float32)
             all_actions.append(action_vec)
+            
+            # Try to extract proprio if available
+            if 'observation.state' in sample:
+                proprio = sample['observation.state']
+                if isinstance(proprio, str):
+                    proprio = self.json.loads(proprio)
+                all_proprios.append(np.array(proprio, dtype=np.float32))
+            
+            # Try to count episodes
+            if 'episode_index' in sample:
+                episode_ids.add(sample['episode_index'])
+            elif 'episode_id' in sample:
+                episode_ids.add(sample['episode_id'])
         
         if not all_actions:
             raise ValueError("No actions found in dataset")
         
         actions_np = np.array(all_actions, dtype=np.float32)
+        
+        # Create mask: True for dimensions to normalize, False for others (e.g., gripper)
+        action_dim = actions_np.shape[1]
+        mask = [True] * min(normalize_dims, action_dim) + [False] * max(0, action_dim - normalize_dims)
         
         self.stats = {
             "action": {
@@ -372,11 +394,70 @@ class ActionProcessor:
                 "max": actions_np.max(axis=0).tolist(),
                 "q01": np.quantile(actions_np, 0.01, axis=0).tolist(),
                 "q99": np.quantile(actions_np, 0.99, axis=0).tolist(),
+                "mask": mask,
             },
-            "num_entries": int(actions_np.shape[0])
+            "num_transitions": int(actions_np.shape[0]),
+            "num_trajectories": len(episode_ids) if episode_ids else 0
         }
         
+        # Add proprio stats if available
+        if all_proprios:
+            proprios_np = np.array(all_proprios, dtype=np.float32)
+            self.stats["proprio"] = {
+                "mean": proprios_np.mean(axis=0).tolist(),
+                "std": proprios_np.std(axis=0).tolist(),
+                "min": proprios_np.min(axis=0).tolist(),
+                "max": proprios_np.max(axis=0).tolist(),
+                "q01": np.quantile(proprios_np, 0.01, axis=0).tolist(),
+                "q99": np.quantile(proprios_np, 0.99, axis=0).tolist(),
+            }
+        else:
+            # Add zeros if no proprio data
+            proprio_dim = action_dim  # Default to action dimension
+            self.stats["proprio"] = {
+                "mean": [0.0] * proprio_dim,
+                "std": [0.0] * proprio_dim,
+                "min": [0.0] * proprio_dim,
+                "max": [0.0] * proprio_dim,
+                "q01": [0.0] * proprio_dim,
+                "q99": [0.0] * proprio_dim,
+            }
+        
         return self.stats
+    
+    def save_dataset_statistics(self, output_path: str, dataset_name: str, 
+                               dataset=None, stats: Optional[Dict] = None):
+        """Save dataset statistics to JSON file.
+        
+        Args:
+            output_path: Path to save the statistics JSON file
+            dataset_name: Name/key for this dataset in the stats file
+            dataset: Dataset to compute stats from (if stats not provided)
+            stats: Pre-computed statistics (if not provided, will compute from dataset)
+        """
+        # Load existing stats file if it exists
+        if os.path.exists(output_path):
+            with open(output_path, 'r') as f:
+                all_stats = json.load(f)
+        else:
+            all_stats = {}
+        
+        # Get or compute stats
+        if stats is None:
+            if dataset is None:
+                raise ValueError("Must provide either dataset or stats")
+            stats = self.compute_dataset_statistics(dataset)
+        
+        # Add to all_stats under dataset_name
+        all_stats[dataset_name] = stats
+        
+        # Save to file
+        os.makedirs(os.path.dirname(output_path) if os.path.dirname(output_path) else '.', exist_ok=True)
+        with open(output_path, 'w') as f:
+            json.dump(all_stats, f, indent=2)
+        
+        print(f"Saved statistics for '{dataset_name}' to {output_path}")
+        return all_stats
     
     def normalize_action_bounds_q99(self, action: Union[np.ndarray, List], 
                                    normalize_dims: int = 6) -> np.ndarray:
