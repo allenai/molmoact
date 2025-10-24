@@ -25,6 +25,7 @@
 
 ---
 ### Updates
+- **[2025/08/30]** 🔥 Code for fine-tuning and data processing have been released! Everything is fully open-source.
 - **[2025/08/30]** 🔥 Code for replicating MolmoAct's training pipeline has been released
 - **[2025/08/15]** 🔥 Code for MolmoAct Evaluation on SimplerEnv has been released at  **[allenai/SimplerEnv](https://github.com/allenai/SimplerEnv)**
 - **[2025/08/12] 🔥 [Datasets](https://huggingface.co/collections/allenai/molmoact-data-mixture-6897e583e13b6c2cf3ea2b80)** used for our pre-training and mid-training have been released
@@ -39,8 +40,8 @@
 2. [Release Notes](#2-release-notes)  
  2.1 [Datasets](#21-datasets)  
  2.2 [Models](#22-models)  
-3. [Installation](#3-training-wip)  
-4. [Training (WIP)](#4-training-wip)  
+3. [Installation](#3-installation)  
+4. [Training (WIP)](#4-training)  
  4.1 [Train Your Own MolmoAct](#41-train-your-own-molmoact)  
   4.1.1 [Data Processing](#411-data-processing)  
   4.1.2 [Fine-tuning (Post-training)](#412-fine-tuning-post-training)  
