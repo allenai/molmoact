@@ -19,6 +19,7 @@ import os
 
 from olmo.data.robot_datasets import *
 from olmo.data.lvis_dataset import LVIS
+from olmo.data.custom_lerobot_dataset import CustomLeRobotDataset
 
 
 def get_dataset_by_name(dataset_name, split) -> Dataset:
@@ -190,11 +191,6 @@ def get_dataset_by_name(dataset_name, split) -> Dataset:
     elif dataset_name == "muir_bench_mc":
         return MuirBench(split, use_mc_style=True)
 
-    
-    # if "lvis" in dataset_name:
-    #     return JSONDatasetMultiConv(dataset_name, split="all", style="demo")
-    
-
     # pre-training
     if "bc_z" in dataset_name:
         return BC_Z(split="train", style="demo")
@@ -229,5 +225,10 @@ def get_dataset_by_name(dataset_name, split) -> Dataset:
     if "libero_long" in dataset_name:
         return LIBEROLong(split="train", style="demo")
     
+    # finetune
+    if "finetune:" in dataset_name:
+        path = dataset_name[len("finetune:"):]
+        return CustomLeRobotDataset(path=path, high_res=False, style="demo")
+
 
     raise NotImplementedError(dataset_name, split)

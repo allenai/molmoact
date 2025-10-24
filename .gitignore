@@ -57,6 +57,7 @@ site/
 /scratch/
 core
 /checkpoints
+/datasets
 
 # tests
 /tests

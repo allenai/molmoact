@@ -52,15 +52,15 @@ def main():
         "making it easier to load weights as HF models."
     )
     parser.add_argument(
-        "base_dir",
+        "--base_dir",
         help="Location of Molmo checkpoint.",
     )
     parser.add_argument(
-        "lora_dir",
+        "--lora_dir",
         help="Location of Molmo checkpoint.",
     )
     parser.add_argument(
-        "output_dir",
+        "--output_dir",
         help="Location to save the converted checkpoint.",
     )
     args = parser.parse_args()

@@ -88,6 +88,11 @@ class MolmoConfig(BaseModelConfig):
     Number of action bins.
     """
 
+    norm_stats_path: Optional[str] = None
+    """
+    Path to normalization data statistics.
+    """
+
     norm_stats: Optional[Dict[str, Dict[str, Any]]] = None
     """
     Normalization data statistics.

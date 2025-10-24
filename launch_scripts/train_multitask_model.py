@@ -146,6 +146,7 @@ if __name__ == "__main__":
     parser.add_argument("--lora_alpha", default=16, type=int)
     parser.add_argument("--lora_dropout", default=0.05, type=float)
     parser.add_argument("--lora_bias", default="none", type=str)
+    parser.add_argument("--norm_stats_path", default=None, type=str)
     parser.add_argument("--img_aug", action='store_true')
     parser.add_argument("--pin_memory", action='store_true')
     parser.add_argument("--ft_embedding", default="lm_head", type=str)
@@ -296,6 +297,12 @@ if __name__ == "__main__":
                 "libero_long",
             ], 1.0],
         ]
+    elif args.mixture in ["robot-finetune"]:
+        tasks = [
+            ["finetune", [
+                "finetune:/path/to/processed_dataset",
+            ], 1.0],
+        ]
     else:
         raise NotImplementedError(args.mixture)
 
@@ -357,6 +364,9 @@ if __name__ == "__main__":
     model_cfg.lora_alpha = args.lora_alpha
     model_cfg.lora_dropout = args.lora_dropout
     model_cfg.lora_bias = args.lora_bias
+
+    # Path to dataset statistics for normalization
+    model_cfg.norm_stats_path = args.norm_stats_path
 
     # Overriding model config
     model_cfg.mm_preprocessor.max_crops = args.max_crops or model_cfg.mm_preprocessor.max_crops

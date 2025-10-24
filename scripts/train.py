@@ -9,16 +9,17 @@ import time
 from datetime import datetime
 from os.path import join
 from pathlib import Path
+import json
 
 import torch
 import wandb
 from beaker import Beaker
-from omegaconf import OmegaConf
+from omegaconf import OmegaConf, open_dict
 from torch.distributed.fsdp import FullyShardedDataParallel as FSDP
 
 from olmo.exceptions import OLMoCliError, OLMoConfigurationError
 from olmo.io import file_exists, write_file
-from olmo.train.checkpointer import Checkpointer, load_model_state_unsharded, load_model_state_hf, is_unsharded_checkpoint, is_hf_checkoint
+from olmo.train.checkpointer import Checkpointer, load_model_state_unsharded, load_model_state_hf, is_unsharded_checkpoint, is_hf_checkpoint
 from olmo.torch_util import (
     barrier,
     get_global_rank,
@@ -61,46 +62,6 @@ def get_trainable_params(model):
         trainable_param_size += param.nelement() * param.element_size() if param.requires_grad else 0
 
     log.info(f'Number of trainable parameters: {trainable_para_num:,d}')
-
-def find_all_linear_names(model, model_cfg):
-    cls = torch.nn.Linear
-    lora_module_names = set()
-    vit_layers = model_cfg.vision_backbone.vit_layers
-    image_num_layers = model_cfg.vision_backbone.vit.image_num_layers
-    vit_cutoff = image_num_layers + vit_layers[0]
-    pattern = re.compile(
-        r"^vision_backbone\.image_vit\.transformer\.resblocks\.(\d+)\..+"
-    )
-
-    # multimodal_keywords = ["mm_projector", "vision_tower", "vision_resampler"]
-    for name, module in model.named_modules():
-        # skip non-linear
-        if not isinstance(module, cls):
-            continue
-        
-        # skip unused vit layers
-        m = pattern.match(name)
-        if m:
-            idx = int(m.group(1))
-            # skip any attention linears in resblocks beyond cutoff
-            if idx > vit_cutoff:
-                continue
-
-        # skip vit and connector
-        if "vision_backbone" in name:
-            continue
-
-        # skip lm head
-        if "transformer.ff_out" in name:
-            continue
-
-        # keep everything else
-        lora_module_names.add(name)
-
-    # if "lm_head" in lora_module_names:  # needed for 16-bit
-    #     lora_module_names.remove("lm_head")
-    
-    return list(lora_module_names)
 
 def run_trainer(cfg: TrainConfig) -> None:
     # TODO: this will decrease training throughput, find a workaround
@@ -158,7 +119,7 @@ def run_trainer(cfg: TrainConfig) -> None:
     if start_from_unsharded:
         assert reset_opt and reset_train, "Unshared checkpoints do not support optim/train state loading"
     
-    start_from_hf = start_from and is_hf_checkoint(start_from)
+    start_from_hf = start_from and is_hf_checkpoint(start_from)
     if start_from_hf:
         assert reset_opt and reset_train, "Huggingface checkpoints do not support optim/train state loading"
 
@@ -174,6 +135,19 @@ def run_trainer(cfg: TrainConfig) -> None:
     model_cfg = cfg.model
     with torch.device("meta"):
         olmo_model = model_cfg.build_model()
+
+
+    if model_cfg.norm_stats_path is not None:
+        
+        p = Path(os.path.expandvars(os.path.expanduser(model_cfg.norm_stats_path)))
+        if not p.exists():
+            raise FileNotFoundError(f"norm_stats_path not found: {p}")
+        norm_stats = json.loads(p.read_text(encoding="utf-8"))
+        if not isinstance(norm_stats, dict):
+            raise TypeError(f"norm_stats JSON root must be an object/dict, got {type(norm_stats).__name__}")
+
+        model_cfg.norm_stats = OmegaConf.create(norm_stats)
+
 
     # Freeze parameters depending on what we are tuning
     if not cfg.ft_connector:

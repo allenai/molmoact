@@ -91,7 +91,7 @@ def load_pil_image(image_path: str) -> PIL.Image.Image:
             return PIL.Image.open(image_path)
 
 
-def load_image(image_path, line_mod_list):
+def load_image(image_path, annotation_list):
     setup_pil()  # Call here so the setting is applied in multi-processing contexts
     if isinstance(image_path, PIL.Image.Image):
         # Avoid annoying palette transparency warnings filling up the logs
@@ -112,11 +112,10 @@ def load_image(image_path, line_mod_list):
         sy = (h - 1) / 255.0
         scale = np.array([sx, sy], dtype=np.float32)
 
-        for line_mod in line_mod_list:
-            if line_mod is not None:
+        for annotation in annotation_list:
+            if annotation is not None:
                 try:
-                    # Safely parse the string to a list of coordinate pairs
-                    coords = ast.literal_eval(line_mod)
+                    coords = annotation
 
                     # to array float, scale, round->int
                     pts = np.asarray(coords, dtype=np.float32) * scale
@@ -137,12 +136,6 @@ def load_image(image_path, line_mod_list):
                         pt2 = tuple(pts[i + 1])
                         cv2.line(annotated_image, pt1, pt2, (0, 255, 255), thickness=2, lineType=cv2.LINE_AA)
 
-                    # for i in range(len(coords) - 1):
-                    #     pt1 = (int(coords[i][0]), int(coords[i][1]))
-                    #     pt2 = (int(coords[i+1][0]), int(coords[i+1][1]))
-                    #     cv2.line(annotated_image, pt1, pt2, (0, 255, 255), thickness=2, lineType=cv2.LINE_AA)
-                    # Convert the annotated array back to a PIL Image
-
                     # # ——— SANITY CHECK DUMP ———
                     # from datetime import datetime
                     # annotated_image_pil = Image.fromarray(annotated_image)
@@ -155,7 +148,7 @@ def load_image(image_path, line_mod_list):
                     # # ————————————————
 
                 except Exception as e:
-                    print(f"Error processing line_mod: {e}")
+                    print(f"Error processing annotation: {e}")
         
         image = Image.fromarray(annotated_image)
                 
@@ -176,10 +169,10 @@ def load_image(image_path, line_mod_list):
             if image_path.startswith("gs://"):
                 image_bytes = get_bytes_range(image_path, 0, None)
                 with PIL.Image.open(BytesIO(image_bytes)) as image:
-                    return load_image(image, line_mod_list)
+                    return load_image(image, annotation_list)
             else:
                 with PIL.Image.open(image_path) as image:
-                    return load_image(image, line_mod_list)
+                    return load_image(image, annotation_list)
 
 
 def save_image(args) -> Tuple[str, bool]:

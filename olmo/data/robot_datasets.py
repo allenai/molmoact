@@ -16,6 +16,7 @@ import io
 import os
 from os.path import exists, join
 from typing import Any, Dict, Iterable, List, Optional, Tuple
+import ast
 
 import datasets
 from datasets import Image as HFImage
@@ -173,6 +174,12 @@ class RobotHfDataset(HfDataset):
     def get(self, item, rng):
         ex = self.dataset[item]
         conv = ex["conversations"]
+        annotation = ex.get("annotation", None)
+
+        if annotation:
+            annotation = ast.literal_eval(annotation)
+
+        assert annotation is None or type(annotation) is list
 
         # Single camera -> return single PIL; Multi -> list of PIL
         image_out = self._extract_images(ex)
@@ -182,7 +189,7 @@ class RobotHfDataset(HfDataset):
             image=image_out,
             question=conv["value"][0],
             answers=conv["value"][1],
-            annotation=ex.get("annotation", None),
+            annotation=annotation,
         )
 
 
