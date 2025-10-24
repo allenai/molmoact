@@ -25,7 +25,7 @@
 
 ---
 ### Updates
-- **[2025/08/30]** 🔥 Code for fine-tuning and data processing have been released! Everything is fully open-source.
+- **[2025/10/24]** 🔥 Code for fine-tuning and data processing have been released! Everything is fully open-source.
 - **[2025/08/30]** 🔥 Code for replicating MolmoAct's training pipeline has been released
 - **[2025/08/15]** 🔥 Code for MolmoAct Evaluation on SimplerEnv has been released at  **[allenai/SimplerEnv](https://github.com/allenai/SimplerEnv)**
 - **[2025/08/12] 🔥 [Datasets](https://huggingface.co/collections/allenai/molmoact-data-mixture-6897e583e13b6c2cf3ea2b80)** used for our pre-training and mid-training have been released
@@ -65,9 +65,7 @@
 
 ## 1. Overview
 
-MolmoAct is a repository for training and using AI2’s open-sourced **Action Reasoning Model** that can reason in space.
-
-> **Note:** Training code, evaluation code, and data processing scripts will be released soon. We’re finalizing them for public release to ensure reproducibility and ease of use.
+MolmoAct is a repository for training and using Ai2’s open-sourced **Action Reasoning Model** that can reason in space.
 
 ---
 
@@ -77,7 +75,7 @@ MolmoAct is a repository for training and using AI2’s open-sourced **Action Re
 
 | Data                               | Description                                                                                                                                  | Dataset Path                                                             |
 |------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------|
-| MolmoAct Dataset                   | MolmoAct dataset in LeRobot format. All contents were collected in-house by AI2.                                                            | https://huggingface.co/datasets/allenai/MolmoAct-Dataset                 |
+| MolmoAct Dataset                   | MolmoAct dataset in LeRobot format. All contents were collected in-house by Ai2.                                                            | https://huggingface.co/datasets/allenai/MolmoAct-Dataset                 |
 | MolmoAct Pre-training Mixture      | Data mixture for MolmoAct pre-training. Contains a subset of OXE formulated as Action Reasoning data, auxiliary robot data, and web data.   | https://huggingface.co/datasets/allenai/MolmoAct-Pretraining-Mixture     |
 | MolmoAct Mid-training Mixture      | Data mixture for MolmoAct mid-training. Contains MolmoAct Dataset formulated as Action Reasoning data.                                      | https://huggingface.co/datasets/allenai/MolmoAct-Midtraining-Mixture     |
 
@@ -160,7 +158,7 @@ python preprocess/action_reasoning_data.py \
 
 #### 4.1.2 Fine-tuning (Post-training)
 
-Note that after you finished the data processing before, you should get a folder `/path/to/processed_dataset` where it has all the data and `dataset_statistics.json`. Then, you need to change `finetune:/path/to/processed_dataset` with the actual path in [`launch_scripts/train_multitask_model.py`](./launch_scripts/train_multitask_model.py). To run the actual training, the following script is provided, which should work well on 8 A100/H100 GPUs. You should customize the gloabal batch size under your GPU setup to avoid OOM.
+Note that after you finished the data processing before, you should get a folder `/path/to/processed_dataset` where it has all the data and `dataset_statistics.json`. Then, you need to change `finetune:/path/to/processed_dataset` with the actual path in [`launch_scripts/train_multitask_model.py`](./launch_scripts/train_multitask_model.py). To run the training, the following script is provided, which should work well on 8 A100/H100 GPUs. You should customize the gloabal batch size under your GPU setup to avoid OOM.
 
 ```bash
 WANDB_API_KEY=<your_wandb_api_key> torchrun \
@@ -245,6 +243,8 @@ Running inference could be performed on the provided docker, though it only requ
 ```bash
 pip install einops torchvision accelerate vllm==0.8.5 transformers==4.52
 ```
+
+You can also refer to [MolmoAct Inference Setup](https://github.com/allenai/SimplerEnv?tab=readme-ov-file#molmoact-inference-setup).
 
 
 ### 4.2 Training Replication
