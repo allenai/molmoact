@@ -422,35 +422,77 @@ class DatasetProcessor:
         
         return example
     
-    def process_dataset(self, dataset_path: str, output_path: Optional[str] = None, num_proc: int = 1):
+    def process_dataset(self, dataset_path: str, output_path: Optional[str] = None, num_proc: int = 1, episodes: Optional[List[int]] = None):
         """Process entire dataset with depth and trace information.
         
         Args:
             dataset_path: Path to input dataset
             output_path: Path for output dataset (defaults to overwriting input)
             num_proc: Number of parallel workers for gripper point detection
+            episodes: List of episode indices to process (None = all episodes)
         """
         print(f"Loading dataset from {dataset_path}...")
-        dataset = LeRobotDataset(repo_id=dataset_path, episodes=[0])
-        dataset = dataset.hf_dataset
+        if episodes is not None:
+            print(f"Filtering to episodes: {episodes}")
+        
+        # Try loading with LeRobotDataset first
+
+        if episodes is not None:
+            lerobot_ds = LeRobotDataset(repo_id=dataset_path, episodes=episodes)
+        else:
+            lerobot_ds = LeRobotDataset(repo_id=dataset_path)
+        
+        # Extract task mapping from metadata
+        task_mapping = {}
+        if hasattr(lerobot_ds, 'meta') and hasattr(lerobot_ds.meta, 'tasks'):
+            print("Tasks:")
+            print(lerobot_ds.meta.tasks)
+            # Check if tasks is already a dict or a list of dicts
+            if isinstance(lerobot_ds.meta.tasks, dict):
+                # Already in the format {task_index: task_string}
+                task_mapping = lerobot_ds.meta.tasks
+            elif isinstance(lerobot_ds.meta.tasks, list):
+                # List of dicts with 'task_index' and 'task' keys
+                for task_info in lerobot_ds.meta.tasks:
+                    task_mapping[task_info['task_index']] = task_info['task']
+            print(f"Loaded {len(task_mapping)} tasks from metadata")
+        else:
+            print("Warning: No task metadata found in dataset")
+        
+        dataset = lerobot_ds.hf_dataset
+            
+            
         print(f"Dataset loaded: {len(dataset)} frames")
         print(f"Features: {list(dataset.features.keys())}")
         
         # Ensure required fields exist
-        required_fields = ['depth', 'trace']
+        required_fields = ['depth', 'trace', 'language_instruction']
         if self.process_actions:
             required_fields.append('processed_action')
         
         missing_fields = [f for f in required_fields if f not in dataset.features]
         if missing_fields:
             print(f"Adding missing fields: {missing_fields}")
+            
+            def add_fields(x):
+                result = {**x}
+                if 'depth' not in x:
+                    result['depth'] = ""
+                if 'trace' not in x:
+                    result['trace'] = "[]"
+                if 'processed_action' not in x:
+                    result['processed_action'] = "{}"
+                if 'language_instruction' not in x:
+                    # Get task_index and look up instruction
+                    task_idx = x.get('task_index', 0)
+                    # Convert tensor to int if needed
+                    if hasattr(task_idx, 'item'):
+                        task_idx = task_idx.item()
+                    result['language_instruction'] = task_mapping.get(int(task_idx), "")
+                return result
+            
             dataset = dataset.map(
-                lambda x: {
-                    **x,
-                    'depth': "" if 'depth' not in x else x['depth'],
-                    'trace': "[]" if 'trace' not in x else x['trace'],
-                    'processed_action': "{}" if 'processed_action' not in x else x['processed_action']
-                },
+                add_fields,
                 desc="Adding missing fields"
             )
         
@@ -499,6 +541,19 @@ class DatasetProcessor:
             processed_dataset.save_to_disk(output_path)
             print("Done!")
         
+        # Save dataset statistics if action processing is enabled
+        if self.process_actions and self.action_processor.stats:
+            stats_output = os.path.join(
+                output_path if output_path else dataset_path,
+                "dataset_statistics.json"
+            )
+            dataset_name = os.path.basename(dataset_path)
+            self.action_processor.save_dataset_statistics(
+                output_path=stats_output,
+                dataset_name=dataset_name,
+                stats=self.action_processor.stats
+            )
+        
         # Print statistics
         print("\nProcessing complete!")
         print(f"Total frames processed: {len(processed_dataset)}")
@@ -508,6 +563,8 @@ class DatasetProcessor:
         print(f"\nSample frame 0:")
         print(f"  Depth tokens (first 100 chars): {sample['depth'][:100] if sample['depth'] else 'None'}...")
         print(f"  Trace line: {sample['trace']}")
+        if 'language_instruction' in sample:
+            print(f"  Language instruction: {sample['language_instruction']}")
         if self.process_actions and 'processed_action' in sample:
             print(f"  Processed action: {sample['processed_action'] if sample['processed_action'] else 'None'}...")
 
@@ -547,8 +604,15 @@ def main():
                         help="Number of discretization bins for actions (default: 256)")
     parser.add_argument("--action-chunk-size", type=int, default=8,
                         help="Size of action chunks for horizon (default: 8)")
+    parser.add_argument("--episodes", type=str, default=None,
+                        help="Comma-separated list of episode indices to process (e.g., '0,1,2' or '0' for testing). Default: process all episodes")
     
     args = parser.parse_args()
+    
+    # Parse episodes argument
+    episodes = None
+    if args.episodes:
+        episodes = [int(e.strip()) for e in args.episodes.split(',')]
     
     # Create processor
     processor = DatasetProcessor(
@@ -563,7 +627,7 @@ def main():
     )
     
     # Process the dataset
-    processor.process_dataset(args.dataset_path, args.output_path)
+    processor.process_dataset(args.dataset_path, args.output_path, episodes=episodes)
 
 
 if __name__ == "__main__":
