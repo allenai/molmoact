@@ -297,6 +297,12 @@ if __name__ == "__main__":
                 "libero_long",
             ], 1.0],
         ]
+    elif args.mixture in ["robot-finetune"]:
+        tasks = [
+            ["finetune", [
+                "finetune:/path/to/processed_dataset",
+            ], 1.0],
+        ]
     else:
         raise NotImplementedError(args.mixture)
 
