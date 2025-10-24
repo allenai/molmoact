@@ -47,11 +47,12 @@
   4.1.2 [Fine-tuning (Post-training)](#412-fine-tuning-post-training)  
   4.1.3 [Merge LoRA](#413-merge-lora)  
   4.1.4 [Inference](#414-inference)  
+  4.1.5 [Visualization](#415-visualization)  
  4.2 [Training Replication](#42-training-replication)  
   4.2.1 [Pre-training](#421-pre-training)  
   4.2.2 [Mid-training](#422-mid-training)  
   4.2.3 [Post-training (LIBERO)](#423-post-training-libero)  
-5. [Evaluation](#5-evaluation-wip)  
+5. [Evaluation](#5-evaluation)  
  5.1 [SimplerEnv](#51-simpler-env)  
  5.2 [LIBERO](#52-libero)  
  5.3 [Real-world](#53-real-world)  
@@ -246,6 +247,19 @@ pip install einops torchvision accelerate vllm==0.8.5 transformers==4.52
 
 You can also refer to [MolmoAct Inference Setup](https://github.com/allenai/SimplerEnv?tab=readme-ov-file#molmoact-inference-setup).
 
+#### 4.1.5 Visualization
+
+Besides robot actions, MolmoAct's inference also includes depth tokens and visual trace. Visual trace consists of 2D coordinates where all values are integers bounded between [0, 256). For visualization purposes, you should scale those coordinates according to the actual image size. To visualize depth from the predicted depth tokens, we need to use the decoder of the VQVAE we trained. We provide the following script to run visualization:
+
+```
+python3 scripts/reconstruct_from_tokens.py \
+    --ckpt_path /path/to/vae-final.pt \
+    --depth_tokens "<DEPTH_START><DEPTH_1>...<DEPTH_END>" \
+    --output_path /path/to/depth.png
+```
+
+If you want to train your own VAVQE for depth estimation, please follow [Aurora-perception](https://github.com/mahtabbigverdi/Aurora-perception). We use the batch size of 64 and learning rate of 1e-3, while all other hyperparameters stay the same. The other difference is that we use [Depth-Anything-V2](https://github.com/DepthAnything/Depth-Anything-V2) instead of its prior version. Note that we train our VQVAE on the generated depth maps of BC-Z, BridgeData V2, and RT-1 subsets published in our [pretraining data mixture](https://huggingface.co/datasets/allenai/MolmoAct-Pretraining-Mixture).
+
 
 ### 4.2 Training Replication
 
@@ -439,7 +453,7 @@ WANDB_API_KEY=<your_wandb_api_key> torchrun --nnodes=8 --nproc-per-node=8 \
 **Merge LoRA & Running Inference**
 - Please refer to sections [4.1.3 Merge LoRA](#413-merge-lora) [4.1.4 Inference](#414-inference).
 
-## 5. Evaluation (WIP)
+## 5. Evaluation
 
 ### 5.1 Simpler-Env
 
