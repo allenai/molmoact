@@ -104,10 +104,54 @@ pip install -e .[all]
 
 ## 4. Training (WIP)
 
-We provide instructions on both how to train your own MolmoAct (WIP) and how to replicate all of our training stages:
+We provide instructions on both how to train your own datasets on MolmoAct and how to replicate all of our training stages:
 
-### 4.1 Data Processing & Fine-tuning (Post-training) (WIP)
-_Content coming soon._
+### 4.1 Data Processing & Fine-tuning (Post-training)
+
+Installation for Data Processing
+
+**Command**
+```bash
+git clone https://github.com/DepthAnything/Depth-Anything-V2.git
+cd Depth-Anything-V2 &&
+pip install -r requirements.txt &&
+pip uninstall -y opencv-python opencv-python-headless opencv-contrib-python &&
+pip install opencv-python-headless --no-cache-dir &&
+pip install lerobot==0.3.3
+```
+
+
+Download Depth Anything V2 Checkpoint
+
+**Command**
+```bash
+wget https://huggingface.co/allenai/MolmoAct-7B-D-0812/resolve/main/depth_anything_v2_vitb.pth
+mv <path/to/depth_anything_v2_vitb.pth> <path/to/Depth-Anything-V2/checkpoints>
+```
+
+Download MolmoAct VQVAE Checkpoint
+
+**Command**
+```bash
+wget https://huggingface.co/allenai/MolmoAct-7B-D-0812/resolve/main/vae-final.pt
+```
+
+To preprocess conventional lerobot dataset format into Action Reasoning Data, first run the preprocessing command: 
+
+**Command**
+```bash
+export DEPTH_CHECKPOINT_DIR="<path/to/Depth-Anything-V2/checkpoints>"
+export VQVAE_MODEL_PATH="<path/to/vqvae.pt>"
+python molmoact/preprocess/action_reasoning_data.py \
+--dataset-path <lerobot/repo_id> \
+--output-path <path/to/output> \
+--depth-encoder vitb \
+--line-length 5 \
+--process-actions \
+--action-bins 256 \
+--action-chunk-size 8
+```
+
 ### 4.2 Training Replication
 
 #### Where data is stored
