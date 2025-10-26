@@ -194,7 +194,7 @@ class CustomLeRobotDataset(Dataset):
             image=image_out,
             question=question,
             answers=answer,
-            annotation=annotation, # this is still string and will be turned into list in ./image_preprocessor.py
+            annotation=annotation,
         )
 
         return out
