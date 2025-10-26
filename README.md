@@ -207,9 +207,10 @@ We perform most of MolmoAct's infernce using huggingface transformers and vLLM. 
 python3 -m olmo.hf_model.molmoact.convert_molmoact_to_hf \
     --checkpoint_dir /path/to/checkpoints/exp_name/stepXXX-merge \
     --output_dir /path/to/checkpoints/exp_name/stepXXX-hf \
-    --style demo
+    --style demo \
+    --norm_stats_path /path/to/dataset_statistics.json
 ```
-where `style` is just a flag for system prompt, and by default should be set to `demo`. There are more options but we won't use them.
+where `style` is just a flag for system prompt, and by default should be set to `demo`. There are more options but we won't use them. Optionally, you can pass the path to `dataset_statistics.json` through `--norm_stats_path` to overwrite the existing dataset statistics or adding one if it doesn't exist.
 
 Note that `checkpoint_dir` has to be the path to the **unsharded** checkpoint. Usually, for LoRA fine-tuning case, it will be the merged checkpoint, which is also unsharded. For full fine-tuning case (like in pre-training and mid-training), you can just replace `--checkpoint_dir` with something like `/path/to/checkpoints/exp_name/stepXXX-unsharded` as there won't be a merged checkpoint. If by any chance you only have the **sharded** checkpoints, we also provide a script to convert sharded checkpoints to unsharded ones:
 

@@ -23,6 +23,7 @@ from .processing_molmoact import MolmoActProcessor
 from .image_processing_molmoact import MolmoActImageProcessor
 
 from omegaconf import OmegaConf
+from pathlib import Path
 
 
 logger = logging.getLogger(__name__)
@@ -359,10 +360,20 @@ def save(
     override_tokenizer: bool,
     chat_template: str,
     precision: str,
+    norm_stats_path: str,
 ) -> None:
     logger.info(f"Loading model config from {checkpoint_dir}")
     config_path = resource_path(checkpoint_dir, "config.yaml")
     model_config: ModelConfig = ModelConfig.load(config_path, key="model", validate_paths=False)
+
+    if norm_stats_path is not None:
+        p = Path(os.path.expandvars(os.path.expanduser(norm_stats_path)))
+        if not p.exists():
+            raise FileNotFoundError(f"norm_stats_path not found: {p}")
+        norm_stats = json.loads(p.read_text(encoding="utf-8"))
+        if not isinstance(norm_stats, dict):
+            raise TypeError(f"norm_stats JSON root must be an object/dict, got {type(norm_stats).__name__}")
+        model_config.norm_stats = norm_stats
 
     hf_config = convert_config(model_config)
     if text_only:
@@ -566,6 +577,11 @@ def main():
         default="fp32",
         help="Precision to use for the model",
     )
+    parser.add_argument(
+        "--norm_stats_path",
+        default=None,
+        help="Path to the json file with dataset statistics",
+    )
     args = parser.parse_args()
 
     prepare_cli_environment()
@@ -577,6 +593,7 @@ def main():
         args.override_tokenizer,
         args.chat_template,
         args.precision,
+        args.norm_stats_path
     )
 
 
