@@ -70,9 +70,9 @@ ARG LIGER_KERNEL_VERSION=0.5.4
 RUN pip install --no-build-isolation --no-cache-dir liger-kernel==${LIGER_KERNEL_VERSION}
 
 # Install direct dependencies, but not source code.
-COPY mm_olmo/pyproject.toml .
-COPY mm_olmo/olmo/__init__.py olmo/__init__.py
-COPY mm_olmo/olmo/version.py olmo/version.py
+COPY pyproject.toml .
+COPY olmo/__init__.py olmo/__init__.py
+COPY olmo/version.py olmo/version.py
 RUN pip install --no-cache-dir '.[all]' && \
     pip uninstall -y ai2-molmoact && \
     rm -rf *
