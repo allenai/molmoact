@@ -6,7 +6,7 @@ from simpler_env.evaluation.argparse import get_args
 from simpler_env.evaluation.maniskill2_evaluator import maniskill2_evaluator
 from simpler_env.evaluation.maniskill2_evaluator_steer import maniskill2_evaluator_steer
 
-TEST = False
+TEST = True
 
 try:
     from simpler_env.policies.octo.octo_model import OctoInference
