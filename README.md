@@ -55,7 +55,7 @@
 5. [Evaluation](#5-evaluation)  
  5.1 [SimplerEnv](#51-simpler-env)  
  5.2 [LIBERO](#52-libero)
- 5.3 [Steer-SimplerEnv](#53-steer)  
+ 5.3 [Steer-SimplerEnv](#53-steer-simplerenv)  
  5.4 [Real-world](#54-real-world)  
 7. [License and Use](#6-license-and-use)  
 8. [Model and Hardware Safety](#7-model-and-hardware-safety)  
@@ -499,7 +499,7 @@ python run_libero_eval.py --task goal --checkpoint allenai/MolmoAct-7B-D-LIBERO-
 python run_libero_eval.py --task 10 --checkpoint allenai/MolmoAct-7B-D-LIBERO-Long-0812
 ```
 
-### 5.3 Steer SimplerEnv
+### 5.3 Steer-SimplerEnv
 
 We release the SimplerEnv evaluation code for MolmoAct at [allenai/SimplerEnv](https://github.com/allenai/SimplerEnv). Please first install the dependencies for SimplerEnv Evaluation environment following [allenai/SimplerEnv](https://github.com/allenai/SimplerEnv) and dependencies for [MolmoAct Inference Setup](https://github.com/allenai/SimplerEnv?tab=readme-ov-file#molmoact-inference-setup). After installing all the dependencies, evaluation scripts are located at:
 
