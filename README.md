@@ -513,7 +513,7 @@ bash molmoact/SteerSimplerEnv/changes.sh
 from the root directory of SimplerEnv/ run this to start steering in an interactive page:
 
 ```bash
-bash scripts/molmoact_test.sh
+bash scripts/molmoact_test.sh allenai/MolmoAct-7B-D-Pretrain-0812 molmoact_test
 ```
 
 ### 5.4 Real-world
