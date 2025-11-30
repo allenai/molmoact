@@ -499,11 +499,18 @@ python run_libero_eval.py --task 10 --checkpoint allenai/MolmoAct-7B-D-LIBERO-Lo
 
 ### 5.3 Steer-SimplerEnv
 
-We release the SimplerEnv evaluation code for MolmoAct at [allenai/SimplerEnv](https://github.com/allenai/SimplerEnv). Please first install the dependencies for SimplerEnv Evaluation environment following [allenai/SimplerEnv](https://github.com/allenai/SimplerEnv) and dependencies for [MolmoAct Inference Setup](https://github.com/allenai/SimplerEnv?tab=readme-ov-file#molmoact-inference-setup). After installing all the dependencies, evaluation scripts are located at:
+## Setting Up Steer MolmoAct for SimplerEnv
 
+Make sure you have cloned this repository (`git clone ...`) and completed the installation of **SimplerEnv** by following the instructions in [**§5.1 Simpler-Env**](#51-simpler-env).
+
+To set up **Steer MolmoAct** for SimplerEnv (this setup can also be adapted to other simulators or real-world systems), first run:
 
 ```bash
-# under the project dir of SimplerEnv/
+bash molmoact/SteerSimplerEnv/changes.sh
+```
+
+# from the root directory of SimplerEnv/
+```bash
 bash scripts/molmoact_test.sh
 ```
 
