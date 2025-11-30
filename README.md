@@ -54,16 +54,14 @@
   4.2.3 [Post-training (LIBERO)](#423-post-training-libero)  
 5. [Evaluation](#5-evaluation)  
  5.1 [SimplerEnv](#51-simpler-env)  
- 5.2 [LIBERO](#52-libero)
- 5.3 [Steer-SimplerEnv](#53-steer-simplerenv)  
+ 5.2 [LIBERO](#52-libero)  
+ 5.3 [Steer-SimplerEnv](#53-steer-simplerenv)  
  5.4 [Real-world](#54-real-world)  
 7. [License and Use](#6-license-and-use)  
 8. [Model and Hardware Safety](#7-model-and-hardware-safety)  
 9. [Citation](#8-citation)  
 10. [Contacts](#9-contacts)
 
-
----
 
 ## 1. Overview
 
