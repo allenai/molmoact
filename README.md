@@ -54,12 +54,13 @@
   4.2.3 [Post-training (LIBERO)](#423-post-training-libero)  
 5. [Evaluation](#5-evaluation)  
  5.1 [SimplerEnv](#51-simpler-env)  
- 5.2 [LIBERO](#52-libero)  
- 5.3 [Real-world](#53-real-world)  
-6. [License and Use](#6-license-and-use)  
-7. [Model and Hardware Safety](#7-model-and-hardware-safety)  
-8. [Citation](#8-citation)  
-9. [Contacts](#9-contacts)
+ 5.2 [LIBERO](#52-libero)
+ 5.3 [Steer-SimplerEnv](#53-steer)  
+ 5.4 [Real-world](#54-real-world)  
+7. [License and Use](#6-license-and-use)  
+8. [Model and Hardware Safety](#7-model-and-hardware-safety)  
+9. [Citation](#8-citation)  
+10. [Contacts](#9-contacts)
 
 
 ---
@@ -498,8 +499,17 @@ python run_libero_eval.py --task goal --checkpoint allenai/MolmoAct-7B-D-LIBERO-
 python run_libero_eval.py --task 10 --checkpoint allenai/MolmoAct-7B-D-LIBERO-Long-0812
 ```
 
+### 5.3 Steer SimplerEnv
 
-### 5.3 Real-world
+We release the SimplerEnv evaluation code for MolmoAct at [allenai/SimplerEnv](https://github.com/allenai/SimplerEnv). Please first install the dependencies for SimplerEnv Evaluation environment following [allenai/SimplerEnv](https://github.com/allenai/SimplerEnv) and dependencies for [MolmoAct Inference Setup](https://github.com/allenai/SimplerEnv?tab=readme-ov-file#molmoact-inference-setup). After installing all the dependencies, evaluation scripts are located at:
+
+
+```bash
+# under the project dir of SimplerEnv/
+bash scripts/molmoact_test.sh
+```
+
+### 5.4 Real-world
 _Content coming soon._
 
 ---
