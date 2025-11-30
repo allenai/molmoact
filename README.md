@@ -500,7 +500,7 @@ python run_libero_eval.py --task 10 --checkpoint allenai/MolmoAct-7B-D-LIBERO-Lo
 
 ### 5.3 Steer-SimplerEnv
 
-# Setting Up Steer MolmoAct for SimplerEnv
+### Setting Up Steer MolmoAct for SimplerEnv
 
 Make sure you have cloned this repository (`git clone ...`) and completed the installation of **SimplerEnv** by following the instructions in [**§5.1 Simpler-Env**](#51-simpler-env).
 
