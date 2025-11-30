@@ -25,6 +25,7 @@
 
 ---
 ### Updates
+- **[2025/11/30]** 🔥 Code for steering experiment of MolmoAct in SimplerEnv has been released at [**§5.3 Steer-SimplerEnv**](#53-steer-simplerenv).
 - **[2025/10/24]** 🔥 Code for fine-tuning and data processing have been released! Everything is fully open-source.
 - **[2025/08/30]** 🔥 Code for replicating MolmoAct's training pipeline has been released
 - **[2025/08/15]** 🔥 Code for MolmoAct Evaluation on SimplerEnv has been released at  **[allenai/SimplerEnv](https://github.com/allenai/SimplerEnv)**
@@ -509,7 +510,7 @@ To set up **Steer MolmoAct** for SimplerEnv (this setup can also be adapted to o
 bash molmoact/SteerSimplerEnv/changes.sh
 ```
 
-from the root directory of SimplerEnv/
+from the root directory of SimplerEnv/ run this to start steering in an interactive page:
 
 ```bash
 bash scripts/molmoact_test.sh
