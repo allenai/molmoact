@@ -509,7 +509,8 @@ To set up **Steer MolmoAct** for SimplerEnv (this setup can also be adapted to o
 bash molmoact/SteerSimplerEnv/changes.sh
 ```
 
-# from the root directory of SimplerEnv/
+from the root directory of SimplerEnv/
+
 ```bash
 bash scripts/molmoact_test.sh
 ```
