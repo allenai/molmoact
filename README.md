@@ -519,7 +519,7 @@ bash scripts/molmoact_test.sh allenai/MolmoAct-7B-D-Pretrain-0812 molmoact_test
 
 ### 5.4 Zero-Shot Evaluation
 
-To support any attempt at zero-shot evaluation of **MolmoAct** using our 10k mid-training dataset, we outline a few recommended guidelines.
+To support any attempt at zero-shot evaluation of **MolmoAct** using our `allenai/MolmoAct-7B-D-0812` checkpoint, we outline a few recommended guidelines.
 
 We suggest using a **Franka setup closely matching the DROID configuration**, with two key differences that reflect the setup used during mid-training:
 
@@ -531,7 +531,8 @@ We suggest using a **Franka setup closely matching the DROID configuration**, wi
    We adopted the gripper tip design from:  
    https://github.com/pantor/learning-shifting-for-grasping/blob/master/cad-models/gripper.stl
 
-Using these components will better align the hardware configuration with the **training distribution** of the mid-training dataset.
+Using these components will better align the hardware configuration with the **training distribution** of the mid-training dataset. For allocentric camera poses, please refer to the `allenai/MolmoAct-Dataset`: tabletop tasks use a fixed exocentric camera pose, while household tasks vary the camera position to capture a wider range of viewpoints.
+
 
 However, because the mid-training dataset contains only **10k robot episodes**, we strongly recommend performing **task-specific fine-tuning or post-training on your own self-collected dataset** to achieve the best performance.
 
