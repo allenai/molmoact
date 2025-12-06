@@ -25,7 +25,7 @@
 
 ---
 ### Updates
-- **[2025/11/30]** 🔥 Tips on zero-shot evaluation of allenai/MolmoAct-7B-D-0812 on Franka setup with MolmoAct mid-training at [**5.3 Steer-SimplerEnv**](#53-steer-simplerenv).
+- **[2025/12/5]** 🔥 Tips on zero-shot evaluation of allenai/MolmoAct-7B-D-0812 on Franka setup with MolmoAct mid-training at [**5.3 Steer-SimplerEnv**](#53-steer-simplerenv).
 - **[2025/11/30]** 🔥 Code for steering experiment of MolmoAct in SimplerEnv has been released at [**5.4 Zero-shot evaluation**](#54-zero-shot-evaluation).
 - **[2025/10/24]** 🔥 Code for fine-tuning and data processing have been released! Everything is fully open-source.
 - **[2025/08/30]** 🔥 Code for replicating MolmoAct's training pipeline has been released
@@ -517,8 +517,23 @@ from the root directory of SimplerEnv/ run this to start steering in an interact
 bash scripts/molmoact_test.sh allenai/MolmoAct-7B-D-Pretrain-0812 molmoact_test
 ```
 
-### 5.4 Zero-shot evaluation
-_Content coming soon._
+### 5.4 Zero-Shot Evaluation
+
+To support any attempt at zero-shot evaluation of **MolmoAct** using our 10k mid-training dataset, we outline a few recommended guidelines.
+
+We suggest using a **Franka setup closely matching the DROID configuration**, with two key differences that reflect the setup used during mid-training:
+
+1. **Wrist-mounted camera:**  
+   We used a custom wrist camera mount:  
+   https://github.com/allenai/molmoact/blob/main/Midtraining_camera_mount.stl
+
+2. **Custom gripper tip:**  
+   We adopted the gripper tip design from:  
+   https://github.com/pantor/learning-shifting-for-grasping/blob/master/cad-models/gripper.stl
+
+Using these components will better align the hardware configuration with the **training distribution** of the mid-training dataset.
+
+However, because the mid-training dataset contains only **10k robot episodes**, we strongly recommend performing **task-specific fine-tuning or post-training on your own self-collected dataset** to achieve the best performance.
 
 ---
 
