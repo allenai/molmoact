@@ -25,7 +25,8 @@
 
 ---
 ### Updates
-- **[2025/11/30]** 🔥 Code for steering experiment of MolmoAct in SimplerEnv has been released at [**§5.3 Steer-SimplerEnv**](#53-steer-simplerenv).
+- **[2025/11/30]** 🔥 Tips on zero-shot evaluation of allenai/MolmoAct-7B-D-0812 on Franka setup with MolmoAct mid-training at [**5.3 Steer-SimplerEnv**](#53-steer-simplerenv).
+- - **[2025/11/30]** 🔥 Code for steering experiment of MolmoAct in SimplerEnv has been released at [**5.4 Zero-shot evaluation**](#Zero-shot evaluation).
 - **[2025/10/24]** 🔥 Code for fine-tuning and data processing have been released! Everything is fully open-source.
 - **[2025/08/30]** 🔥 Code for replicating MolmoAct's training pipeline has been released
 - **[2025/08/15]** 🔥 Code for MolmoAct Evaluation on SimplerEnv has been released at  **[allenai/SimplerEnv](https://github.com/allenai/SimplerEnv)**
@@ -516,7 +517,7 @@ from the root directory of SimplerEnv/ run this to start steering in an interact
 bash scripts/molmoact_test.sh allenai/MolmoAct-7B-D-Pretrain-0812 molmoact_test
 ```
 
-### 5.4 Real-world
+### 5.4 Zero-shot evaluation
 _Content coming soon._
 
 ---
