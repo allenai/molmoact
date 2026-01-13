@@ -92,7 +92,7 @@ class CustomLeRobotDataset(Dataset):
 
         raise TypeError(f"Cannot convert type {type(x)} to PIL.Image")
 
-    def resize_image(self, img: Image.Image, max_size: int = 378) -> Image.Image:
+    def resize_image(self, img: Image.Image, max_size: int = 336) -> Image.Image:
         """
         Resize `img` so that max(width, height) <= max_size while preserving aspect ratio.
         Does not upscale smaller images.
